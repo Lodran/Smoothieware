@@ -67,11 +67,16 @@ typedef enum {
     p30 = P0_4,
 
     // Other mbed Pin Names
-#ifdef MCB1700
+#if defined (MCB1700)
     LED1 = P1_28,
     LED2 = P1_29,
     LED3 = P1_31,
     LED4 = P2_2,
+#elif defined (MINI_DK2)
+    LED1 = P3_25,
+    LED2 = P3_26,
+    LED3 = NC,
+    LED4 = NC,
 #else
     LED1 = P1_18,
     LED2 = P1_20,

@@ -47,7 +47,7 @@ StepperMotor::StepperMotor(Pin& step, Pin& dir, Pin& en) : step_pin(step), dir_p
     this->step_signal_hook = new Hook();
 
     enable(false);
-    set_high_on_debug(en.port_number, en.pin);
+    set_high_on_debug(en.port_identifier(), en.pin());
 
     steps_per_mm         = 1.0F;
     max_rate             = 50.0F;

@@ -37,17 +37,17 @@ unsigned int Adc::read(Pin* pin){
 
 // Convert a smoothie Pin into a mBed Pin
 PinName Adc::_pin_to_pinname(Pin* pin){
-    if( pin->port == LPC_GPIO0 && pin->pin == 23 ){
+    if( pin->port_identifier() == 0 && pin->pin() == 23 ){
         return p15;
-    }else if( pin->port == LPC_GPIO0 && pin->pin == 24 ){
+    }else if( pin->port_identifier() == 0 && pin->pin() == 24 ){
         return p16;
-    }else if( pin->port == LPC_GPIO0 && pin->pin == 25 ){
+    }else if( pin->port_identifier() == 0 && pin->pin() == 25 ){
         return p17;
-    }else if( pin->port == LPC_GPIO0 && pin->pin == 26 ){
+    }else if( pin->port_identifier() == 0 && pin->pin() == 26 ){
         return p18;
-    }else if( pin->port == LPC_GPIO1 && pin->pin == 30 ){
+    }else if( pin->port_identifier() == 1 && pin->pin() == 30 ){
         return p19;
-    }else if( pin->port == LPC_GPIO1 && pin->pin == 31 ){
+    }else if( pin->port_identifier() == 1 && pin->pin() == 31 ){
         return p20;
     }else{
         //TODO: Error

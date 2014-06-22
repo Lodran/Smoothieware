@@ -468,6 +468,12 @@ void USBHAL::init() {
     LPC_PINCON->PINSEL1 &= 0xc3ffffff;
     LPC_PINCON->PINSEL1 |= 0x14000000;
 
+#if defined (MINI_DK2)
+    // Configure pin P1.30 to be VBus
+    LPC_PINCON->PINSEL3 &= 0xCFFFFFFF;
+    LPC_PINCON->PINSEL3 |= 0x10000000;
+#endif
+
     // Configure pin P2.9 to be Connect
     LPC_PINCON->PINSEL4 &= 0xfffcffff;
     LPC_PINCON->PINSEL4 |= 0x00040000;

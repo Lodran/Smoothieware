@@ -58,8 +58,18 @@
 // Watchdog wd(5000000, WDT_MRI);
 
 // USB Stuff
+#if defined (MINI_DK2)
+#define SD_SCK	P1_20
+#define SD_CS	P1_21
+#define SD_MISO	P1_23
+#define SD_MOSI	P1_24
+#define SD_CD	P1_25
+
+SDCard sd  __attribute__ ((section ("AHBSRAM0")))(SD_MOSI, SD_MISO, SD_SCK, SD_CS);	// this selects alternate SPI0 as the sdcard
+#else
 SDCard sd  __attribute__ ((section ("AHBSRAM0"))) (P0_9, P0_8, P0_7, P0_6);      // this selects SPI1 as the sdcard as it is on Smoothieboard
 //SDCard sd(P0_18, P0_17, P0_15, P0_16);  // this selects SPI0 as the sdcard
+#endif
 
 USB u __attribute__ ((section ("AHBSRAM0")));
 USBSerial usbserial __attribute__ ((section ("AHBSRAM0"))) (&u);
@@ -69,6 +79,15 @@ DFU dfu __attribute__ ((section ("AHBSRAM0"))) (&u);
 
 SDFAT mounter __attribute__ ((section ("AHBSRAM0"))) ("sd", &sd);
 
+#if defined (MINI_DK2)
+
+GPIO led1(P3_25);
+GPIO led2(P3_26);
+//GPIO _SD_SCK(SD_SCK);
+//GPIO _SD_CS(SD_CS);
+
+#else
+
 GPIO leds[5] = {
     GPIO(P1_18),
     GPIO(P1_19),
@@ -77,13 +96,22 @@ GPIO leds[5] = {
     GPIO(P4_28)
 };
 
+#endif
+
 void init() {
 
     // Default pins to low status
+#if defined (MINI_DK2)
+    led1.output();
+    led1 = 0;
+    led2.output();
+    led2 = 0;
+#else
     for (int i = 0; i < 5; i++){
         leds[i].output();
         leds[i]= 0;
     }
+#endif
 
     Kernel* kernel = new Kernel();
 
@@ -171,8 +199,13 @@ void init() {
 
     if(kernel->use_leds) {
         // set some leds to indicate status... led0 init doe, led1 mainloop running, led2 idle loop running, led3 sdcard ok
+#if defined (MINI_DK2)
+        led1 = 1;
+        //led2 = sdok ? 1: 0;
+#else
         leds[0]= 1; // indicate we are done with init
         leds[3]= sdok?1:0; // 4th led inidicates sdcard is available (TODO maye should indicate config was found)
+#endif
     }
 
     if(sdok) {
@@ -203,7 +236,11 @@ int main()
     while(1){
         if(THEKERNEL->use_leds) {
             // flash led 2 to show we are alive
+#if defined (MINI_DK2)
+            led2 = (cnt++ & 0x1000) ? 1 : 0;
+#else
             leds[1]= (cnt++ & 0x1000) ? 1 : 0;
+#endif
         }
         THEKERNEL->call_event(ON_MAIN_LOOP);
         THEKERNEL->call_event(ON_IDLE);

@@ -126,11 +126,13 @@ bool SlowTicker::flag_1s(){
 extern GPIO leds[];
 void SlowTicker::on_idle(void*)
 {
+#if !defined (MINI_DK2)
     static uint16_t ledcnt= 0;
     if(THEKERNEL->use_leds) {
         // flash led 3 to show we are alive
         leds[2]= (ledcnt++ & 0x1000) ? 1 : 0;
     }
+#endif
 
     // if interrupt has set the 1 second flag
     if (flag_1s())

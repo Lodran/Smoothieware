@@ -144,7 +144,7 @@ void TemperatureControl::on_config_reload(void *argument)
     this->use_bangbang = THEKERNEL->config->value(temperature_control_checksum, this->name_checksum, bang_bang_checksum)->by_default(false)->as_bool();
     this->hysteresis = THEKERNEL->config->value(temperature_control_checksum, this->name_checksum, hysteresis_checksum)->by_default(2)->as_number();
 
-    set_low_on_debug(heater_pin.port_number, heater_pin.pin);
+    set_low_on_debug(heater_pin.port_identifier(), heater_pin.pin());
 
     // activate SD-DAC timer
     THEKERNEL->slow_ticker->attach( THEKERNEL->config->value(temperature_control_checksum, this->name_checksum, pwm_frequency_checksum)->by_default(2000)->as_number() , &heater_pin, &Pwm::on_tick);

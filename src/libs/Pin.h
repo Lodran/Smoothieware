@@ -5,62 +5,86 @@
 #include <stdio.h>
 #include <string>
 
-#include "libs/LPC17xx/sLPC17xx.h" // smoothed mbed.h lib
+#include "Port.h"
+#include "NullPort.h"
 
-class Pin {
-    public:
-        Pin();
-
-        Pin* from_string(std::string value);
-
-        inline bool connected(){
-            return this->pin < 32;
-        }
-
-        inline Pin* as_output(){
-            if (this->pin < 32)
-                this->port->FIODIR |= 1<<this->pin;
-            return this;
-        }
-
-        inline Pin* as_input(){
-            if (this->pin < 32)
-                this->port->FIODIR &= ~(1<<this->pin);
-            return this;
-        }
-
-        Pin* as_open_drain(void);
-
-        Pin* as_repeater(void);
-
-        Pin* pull_up(void);
-
-        Pin* pull_down(void);
-
-        Pin* pull_none(void);
-
-        inline bool get(){
-
-            if (this->pin >= 32) return false;
-            return this->inverting ^ (( this->port->FIOPIN >> this->pin ) & 1);
-        }
-
-        inline void set(bool value)
+class Pin
+{
+protected:
+    Port* _port;
+    uint8_t _pin;
+    
+public:
+    Pin() :
+    _port(&NullPort::nullport),
+    _pin(0x7F)
+    { }
+    
+    Pin* from_string(std::string inValue);
+    
+    bool connected()
+    { return (_port != &NullPort::nullport) && this->pin() != 0x7F; }
+    
+    inline Pin* as_output()
+    { this->_port->configure_type(this->pin(), true); return this; }
+    
+    inline Pin* as_input()
+    { this->_port->configure_type(this->pin(), false); return this; }
+    
+    inline Pin* as_open_drain()
+    { this->_port->configure_opendrain(this->pin(), true); return this; }
+    
+    inline Pin* as_repeater()
+    { this->_port->configure_mode(this->pin(), PIN_REPEATER); return this; }
+    
+    inline Pin* pull_up()
+    { this->_port->configure_mode(this->pin(), PIN_PULLUP); return this; }
+    
+    inline Pin* pull_down()
+    { this->_port->configure_mode(this->pin(), PIN_PULLDOWN); return this; }
+    
+    inline Pin* pull_none()
+    { this->_port->configure_mode(this->pin(), PIN_PULLNONE); return this; }
+    
+    inline uint8_t pin()
+    { return _pin & 0x7F; }
+    
+    inline void pin(uint8_t inValue)
+    { _pin = (_pin & 0x80) | (inValue & 0x7F); }
+    
+    inline bool inverting()
+    { return _pin >= 0x80; }
+    
+    inline void inverting(bool inValue)
+    { _pin = (_pin & 0x7F) | (inValue << 7); }
+    
+    inline bool get()
+    {
+        if (this->connected())
+            return this->_port->get_pin(this->pin()) ^ this->inverting();
+        else
+            return false;
+    }
+    
+    inline void set(bool inValue)
+    {
+        if (this->connected())
         {
-            if (this->pin >= 32) return;
-            if ( this->inverting ^ value )
-                this->port->FIOSET = 1 << this->pin;
+            if (inValue ^ this->inverting())
+                this->_port->set_pin(this->pin());
             else
-                this->port->FIOCLR = 1 << this->pin;
+                this->_port->clear_pin(this->pin());
         }
-
-        LPC_GPIO_TypeDef* port;
-        bool inverting;
-        char port_number;
-        unsigned char pin;
+    }
+    
+    inline uint16_t port_identifier()
+    { return this->_port->identifier(); }
+    
+    inline PinName mbed_pinname()
+    { return this->_port->mbed_pinname(this->pin()); }
+    
+    inline void dump(std::string inName)
+    { printf("%s ", inName.c_str()); this->_port->dump_pin(this->pin()); }
 };
 
-
-
-
-#endif
+#endif /* defined(PIN_H) */

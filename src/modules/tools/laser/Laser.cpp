@@ -34,24 +34,24 @@ void Laser::on_module_loaded() {
     laser_pin = NULL;
 
     // Get mBed-style pin from smoothie-style pin
-    if( dummy_pin->port_number == 2 ){
-        if( dummy_pin->pin == 0 ){ this->laser_pin = new mbed::PwmOut(p26); }
-        if( dummy_pin->pin == 1 ){ this->laser_pin = new mbed::PwmOut(p25); }
-        if( dummy_pin->pin == 2 ){ this->laser_pin = new mbed::PwmOut(p24); }
-        if( dummy_pin->pin == 3 ){ this->laser_pin = new mbed::PwmOut(p23); }
-        if( dummy_pin->pin == 4 ){ this->laser_pin = new mbed::PwmOut(p22); }
-        if( dummy_pin->pin == 5 ){ this->laser_pin = new mbed::PwmOut(p21); }
+    if( dummy_pin->port_identifier() == 2 ){
+        if( dummy_pin->pin() == 0 ){ this->laser_pin = new mbed::PwmOut(p26); }
+        if( dummy_pin->pin() == 1 ){ this->laser_pin = new mbed::PwmOut(p25); }
+        if( dummy_pin->pin() == 2 ){ this->laser_pin = new mbed::PwmOut(p24); }
+        if( dummy_pin->pin() == 3 ){ this->laser_pin = new mbed::PwmOut(p23); }
+        if( dummy_pin->pin() == 4 ){ this->laser_pin = new mbed::PwmOut(p22); }
+        if( dummy_pin->pin() == 5 ){ this->laser_pin = new mbed::PwmOut(p21); }
     }
 
     if (laser_pin == NULL)
     {
-        THEKERNEL->streams->printf("Error: Laser cannot use P%d.%d (P2.0 - P2.5 only). Laser module disabled.\n", dummy_pin->port_number, dummy_pin->pin);
+        THEKERNEL->streams->printf("Error: Laser cannot use P%d.%d (P2.0 - P2.5 only). Laser module disabled.\n", dummy_pin->port_identifier(), dummy_pin->pin());
         delete dummy_pin;
         delete this;
         return;
     }
 
-    this->laser_inverting = dummy_pin->inverting;
+    this->laser_inverting = dummy_pin->inverting();
 
     delete dummy_pin;
     dummy_pin = NULL;

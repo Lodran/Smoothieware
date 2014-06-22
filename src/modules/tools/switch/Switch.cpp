@@ -91,7 +91,7 @@ void Switch::on_config_reload(void *argument)
         }
     }
 
-    set_low_on_debug(output_pin.port_number, output_pin.pin);
+    set_low_on_debug(output_pin.port_identifier(), output_pin.pin());
 
     // Set the on/off command codes, Use GCode to do the parsing
     input_on_command_letter = 0;

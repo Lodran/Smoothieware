@@ -3,6 +3,7 @@
 
 #include "DigipotBase.h"
 #include "spi.h"
+#include "Pin.h"
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 

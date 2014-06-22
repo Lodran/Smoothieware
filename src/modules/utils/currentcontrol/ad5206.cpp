@@ -5,13 +5,9 @@
 
 #include <string>
 
-/*
- #include "libs/Kernel.h"
- #include "libs/utils.h"
- #include <libs/Pin.h>
- #include "spi.h"
- #include <math.h>
- */
+#include "checksumm.h"
+#include "ConfigValue.h"
+#include "Config.h"
 
 static const uint16_t ad5206_checksum = CHECKSUM("ad5206");
 static const uint16_t mosi_checksum = CHECKSUM("mosi");

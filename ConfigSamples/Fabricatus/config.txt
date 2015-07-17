@@ -1,0 +1,265 @@
+# NOTE Lines must not exceed 132 characters
+# Robot module configurations : general handling of movement G-codes and slicing into moves
+default_feed_rate                            4000             # Default rate ( mm/minute ) for G1/G2/G3 moves
+default_seek_rate                            4000             # Default rate ( mm/minute ) for G0 moves
+mm_per_arc_segment                           0.5              # Arcs are cut into segments ( lines ), this is the length for
+# these segments.  Smaller values mean more resolution,
+# higher values mean faster computation
+mm_per_line_segment                          5                # Lines can be cut into segments ( not usefull with cartesian
+# coordinates robots ).
+
+# Arm solution configuration : Cartesian robot. Translates mm positions into stepper positions
+
+# Planner module configuration : Look-ahead and acceleration configuration
+planner_queue_size                           32               # DO NOT CHANGE THIS UNLESS YOU KNOW EXACTLY WHAT YOU ARE DOING
+acceleration                                 3000             # Acceleration in mm/second/second.
+acceleration_ticks_per_second                1000             # Number of times per second the speed is updated
+junction_deviation                           0.05             # Similar to the old "max_jerk", in millimeters,
+# see https://github.com/grbl/grbl/blob/master/planner.c#L409
+# and https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8
+# Lower values mean being more careful, higher values means being
+# faster and have more jerk
+#minimum_planner_speed                       0.0              # sets the minimum planner speed in mm/sec
+
+# Stepper module configuration
+microseconds_per_step_pulse                  1                # Duration of step pulses to stepper drivers, in microseconds
+minimum_steps_per_minute                     1200             # Never step slower than this
+base_stepping_frequency                      100000           # Base frequency for stepping, higher gives smoother movement
+
+# GPIO Expansion port
+
+xport.10.type       spi
+xport.10.sclk       0.7
+xport.10.miso       0.8
+xport.10.mosi       0.9
+xport.10.latch      2.5
+xport.10.pincount   32
+
+set_output_pin.epsilon_ms3_pin          10.16!  # E1
+set_output_pin.epsilon_ms1_pin          10.22
+set_output_pin.epsilon_ms2_pin          10.23!
+set_output_pin.epsilon_reset_pin        10.20!
+set_output_pin_epsilon_en_pin           10.21
+set_output_pin.zeta_ms1_pin             10.11!  # X1
+set_output_pin.zeta_ms2_pin             10.10
+set_output_pin.zeta_ms3_pin             10.9!
+set_output_pin.zeta_reset_pin           10.13!
+set_output_pin.zeta_en_pin              10.12
+
+set_output_pin.bed0_heater_pin		2.0
+set_output_pin.bed1_heater_pin		2.1
+
+currentcontrol_module_enable                 true             #
+digipotchip                     ad5206
+#digipot_factor                  123.6363601685                # factor for converting current to digipot value (1K AR)
+digipot_factor                  295.1818237305                # factor for converting current to digipot value (4.7K AR)
+# ad5206.mosi                   0.9
+# ad5206.miso                   0.8
+# ad5206.sclk                   0.7
+ad5206.cs                       2.4     # Should become 2.4
+
+zeta_current        0.5
+ad5206.zeta_channel                                2                # digipot W3
+
+endstops_enable                              true             # the endstop module is enabled by default and can be disabled here
+
+# X (Alpha) axis configuration
+
+alpha_step_pin                  0.0     # X0 Step
+alpha_dir_pin                   1.29    # X0 Direction
+alpha_en_pin                    10.28   # X0 Enable
+
+set_output_pin.alpha_reset_pin  10.8!   # X0 /RESET
+set_output_pin.alpha_ms1_pin    10.29!  # X0 Microstep 1
+set_output_pin.alpha_ms2_pin    10.30   # X0 Microstep 2
+set_output_pin.alpha_ms3_pin    10.31!  # X0 Microstep 3
+
+alpha_steps_per_mm              80      # X0 Steps/mm
+alpha_max_rate                  30000   # X0 maximum mm/min
+alpha_current                   0.7     # X0 stepper motor current
+ad5206.alpha_channel            0       # Digipot wiper 1
+
+x_axis_max_speed                30000   # X0 maximum mm/min
+
+alpha_min_endstop               1.28!    # X0 Minimum endstop
+alpha_homing_direction          home_to_min
+alpha_min                       0
+alpha_max                                    200              # this gets loaded after homing when home_to_max is set
+
+# Add X1 (Zeta) axis configuration here.
+
+# Y (Beta) axis configuration
+
+beta_step_pin                   0.20    # Y Step
+beta_dir_pin                    0.21    # Y Direction
+beta_en_pin                     10.1    # Y Enable
+
+set_output_pin.beta_reset_pin   10.2!   # Y /RESET
+set_output_pin.beta_ms1_pin     10.0!   # Y Microstep 1
+set_output_pin.beta_ms2_pin     10.14   # Y Microstep 2
+set_output_pin.beta_ms3_pin     10.15!  # Y Microstep 3
+
+beta_steps_per_mm               80      # Y Steps/mm
+beta_max_rate                   30000   # Y maximum mm/min
+beta_current                    0.7     # Y stepper motor current
+ad5206.beta_channel             1       # Digipot wiper 2
+
+y_axis_max_speed                30000   # Y maximum mm/min
+
+beta_min_endstop                0.19!    # Y Minimum endstop
+beta_homing_direction           home_to_min
+beta_min                        0
+beta_max                                     200              #
+
+# Z (Gamma) axis configuration
+
+gamma_step_pin                  2.6     # Z Step                √
+gamma_dir_pin                   2.7     # Z Direction           √
+gamma_en_pin                    10.4    # Z Enable              √
+
+set_output_pin.gamma_reset_pin  10.3!   # Z /RESET              √
+set_output_pin.gamma_ms1_pin    10.5!   # Z Microstep 1         √
+set_output_pin.gamma_ms2_pin    10.6    # Z Microstep 2         √
+set_output_pin.gamma_ms3_pin    10.7!   # Z Microstep 3         √
+
+gamma_steps_per_mm              1600    # Z Steps/mm
+gamma_max_rate                  300     # Z maximum mm/min
+gamma_current                   0.7     # Z stepper motor current
+ad5206.gamma_channel            3       # Digipot wiper 4
+
+z_axis_max_speed                300     # Z maximum mm/min
+
+gamma_min_endstop               2.8!    # Z Minimum endstop     √
+gamma_max_endstop		3.25	# E0 probe
+gamma_homing_direction           home_to_min
+gamma_min                        0
+gamma_max                    	 200              #
+
+# Extruder 0 (Delta) configuration
+
+extruder.hotend.enable          true    # Enable the extruder module.
+
+extruder.hotend.step_pin        0.10    # E0 Step
+extruder.hotend.dir_pin         0.1     # E0 Direction
+extruder.hotend.en_pin          10.26   # E0 Enable
+
+set_output_pin.delta_reset_pin  10.27!  # E0 /Reset
+set_output_pin.delta_ms2_pin    10.24!  # E0 Microstep 1
+set_output_pin.delta_ms1_pin    10.25   # E0 Microstep 2
+set_output_pin.delta_ms3_pin    10.19!  # E0 Microstep 3
+
+extruder.hotend.steps_per_mm    700     # Extruder steps/mm
+extruder.hotend.max_speed       50      # Extruder maximum mm/second !!! (not measured in mm/min)
+delta_current                   0.7     # E0 stepper motor current
+ad5206.delta_channel            4       # Digipot wiper 5
+
+extruder.hotend.default_feed_rate   600 # Default rate ( mm/minute ) for moves where only the extruder moves
+extruder.hotend.acceleration        500 # Acceleration for the stepper motor, as of 0.6, arbitrary ratio
+
+temperature_control.hotend.enable            true             # Whether to activate this ( "hotend" ) module at all.
+temperature_control.hotend.thermistor_pin    0.26             # Pin for the thermistor to read (AD0[3])
+temperature_control.hotend.heater_pin        1.31              # Pin that controls the heater
+temperature_control.hotend.thermistor        EPCOS100K        # see src/modules/tools/temperaturecontrol/TemperatureControl.cpp:64
+temperature_control.hotend.set_m_code        104              #
+temperature_control.hotend.set_and_wait_m_code 109            #
+temperature_control.hotend.designator        T                #
+temperature_control.hotend.max_pwm          64               # max pwm, 64 is a good value if driving a 12v resistor with 24v.
+
+# for now the first extruder's offsets should be left at 0 or homing will get confused
+extruder.hotend.x_offset                        0                # x offset from origin in mm
+extruder.hotend.y_offset                        0                # y offset from origin in mm
+extruder.hotend.z_offset                        0                # z offset from origin in mm
+
+switch.printfan.enable              true        # Activate the print fan module
+switch.printfan.input_on_command    M106        # M106 Snnn turns it on
+switch.printfan.input_off_command   M107        # M107 turns it off
+switch.printfan.output_pin          0.28        # E0_FAN_P
+#witch.printfan.output_type         pwm         # Use PWM
+
+switch.misc.enable                  true        # Activate the nozzle fan module
+switch.misc.input_on_command        M42         # M42 Snnn turns it on.
+switch.misc.input_off_command       M43         # M43 turns it off.
+switch.misc.output_pin              0.27        # E0 nozzle Fan (0.27)
+switch.misc.output_type             pwm         # Use PWM
+
+switch.lamp.enable                  true        # Activate the lamp module
+switch.lamp.input_on_command        M52         # M52 Snnn turns it on or off.
+switch.lamp.output_pin              3.26        # E0 Lamp
+switch.lamp.output_type             pwm         # Use PWM
+
+# Add Extruder 1 (Epsilon) configuration here
+
+extruder.hotend2.enable          true    # Enable the extruder module.
+
+extruder.hotend2.step_pin        2.2     # E1 Step
+extruder.hotend2.dir_pin         2.3     # E1 Direction
+extruder.hotend2.en_pin          10.21   # E1 Enable
+
+set_output_pin.epsilon_reset_pin  10.20!  # E1 /Reset
+set_output_pin.epsilon_ms2_pin    10.22!  # E1 Microstep 1
+set_output_pin.epsilon_ms1_pin    10.23   # E1 Microstep 2
+set_output_pin.epsilon_ms3_pin    10.16!  # E1 Microstep 3
+
+extruder.hotend2.steps_per_mm    700     # Extruder steps/mm
+extruder.hotend2.max_speed       50      # Extruder maximum mm/second !!! (not measured in mm/min)
+epsilon_current                 0.7     # E1 stepper motor current
+ad5206.epsilon_channel          5       # Digipot wiper 6
+
+extruder.hotend2.default_feed_rate   600 # Default rate ( mm/minute ) for moves where only the extruder moves
+extruder.hotend2.acceleration        500 # Acceleration for the stepper motor, as of 0.6, arbitrary ratio
+
+temperature_control.hotend2.enable            true             # Whether to activate this ( "hotend" ) module at all.
+temperature_control.hotend2.thermistor_pin    0.23             # Pin for the thermistor to read (AD0[?])
+temperature_control.hotend2.heater_pin        0.5              # Pin that controls the heater
+temperature_control.hotend2.thermistor        EPCOS100K        # see src/modules/tools/temperaturecontrol/TemperatureControl.cpp:64
+temperature_control.hotend2.set_m_code        884              #
+temperature_control.hotend2.set_and_wait_m_code 889            #
+temperature_control.hotend2.designator        T1                #
+temperature_control.hotend2.max_pwm          64               # max pwm, 64 is a good value if driving a 12v resistor with 24v.
+
+switch.printfan2.enable              true        # Activate the print fan module
+switch.printfan2.input_on_command    M106        # M106 Snnn turns it on
+switch.printfan2.input_off_command   M107        # M107 turns it off
+switch.printfan2.output_pin          4.28        # E1_FAN_P
+switch.printfan2.output_type         pwm         # Use PWM
+
+switch.nozzlefan2.enable                  true        # Activate the nozzle fan module
+switch.nozzlefan2.input_on_command        M42         # M42 Snnn turns it on.
+switch.nozzlefan2.output_pin              0.4        # E1_FAN_N
+switch.nozzlefan2.output_type             pwm         # Use PWM
+
+switch.lamp2.enable                  true        # Activate the lamp module
+switch.lamp2.input_on_command        M52         # M52 Snnn turns it on or off.
+switch.lamp2.output_pin              4.29        # E1_LED
+switch.lamp2.output_type             pwm         # Use PWM
+
+# Bed heater configuration
+
+temperature_control.bed.enable               true             #
+temperature_control.bed.thermistor_pin       0.25             # B1_TEMP P0.25	(B0_TEMP on P0.24)
+temperature_control.bed.heater_pin           2.0              # (and 2.1)
+temperature_control.bed.thermistor           EPCOS100K        # see src/modules/tools/temperaturecontrol/TemperatureControl.cpp:64
+# for a list of valid thermistor names
+temperature_control.bed.set_m_code           140              #
+temperature_control.bed.set_and_wait_m_code  190              #
+temperature_control.bed.designator           B                #
+
+temperature_control.bed.bang_bang            true             # set to true to use bang bang control rather than PID
+#temperature_control.bed.hysteresis           2.0             # set to the temperature in degrees C to use as hysteresis
+
+# bed temperature control hack for second mosfet
+#   uses one thermistor and 1 gcode to control 2 mosfets.
+
+temperature_control.bed1.enable               true             #
+temperature_control.bed1.thermistor_pin       0.25             #
+temperature_control.bed1.heater_pin           2.1              #
+temperature_control.bed1.thermistor           EPCOS100K        # see src/modules/tools/temperaturecontrol/TemperatureControl.cpp:64
+# for a list of valid thermistor names
+temperature_control.bed1.set_m_code           140              #
+temperature_control.bed1.set_and_wait_m_code  190              #
+temperature_control.bed1.designator           B1               #
+
+temperature_control.bed1.bang_bang            true             # set to true to use bang bang control rather than PID
+#temperature_control.bed1.hysteresis           2.0             # set to the temperature in degrees C to use as hysteresis
+
+

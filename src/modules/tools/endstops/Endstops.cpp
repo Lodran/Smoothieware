@@ -460,15 +460,20 @@ void Endstops::on_gcode_received(void *argument)
     } else if (gcode->has_m) {
         switch (gcode->m) {
             case 119: {
-
-                int px = this->home_direction[0] ? 0 : 3;
-                int py = this->home_direction[1] ? 1 : 4;
-                int pz = this->home_direction[2] ? 2 : 5;
-                const char *mx = this->home_direction[0] ? "min" : "max";
-                const char *my = this->home_direction[1] ? "min" : "max";
-                const char *mz = this->home_direction[2] ? "min" : "max";
-
-                gcode->stream->printf("X %s:%d Y %s:%d Z %s:%d", mx, this->pins[px].get(), my, this->pins[py].get(), mz, this->pins[pz].get());
+                
+                if (this->pins[0].connected())
+                    gcode->stream->printf("X min: %d ", this->pins[0].get());
+                if (this->pins[0].connected())
+                    gcode->stream->printf("X max: %d ", this->pins[3].get());
+                if (this->pins[0].connected())
+                    gcode->stream->printf("Y min: %d ", this->pins[1].get());
+                if (this->pins[0].connected())
+                    gcode->stream->printf("Y min: %d ", this->pins[4].get());
+                if (this->pins[0].connected())
+                    gcode->stream->printf("Z min: %d ", this->pins[2].get());
+                if (this->pins[0].connected())
+                    gcode->stream->printf("Z max: %d ", this->pins[5].get());
+                
                 gcode->add_nl= true;
                 gcode->mark_as_taken();
             }

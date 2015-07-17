@@ -21,7 +21,7 @@ protected:
 
     inline XPort(uint16_t inIdentifier) :
     	super(inIdentifier),
-    	_value(0xFFFFFFFF)
+    	_value(0)
     { }
     
     virtual void write() = 0;

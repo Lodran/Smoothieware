@@ -23,10 +23,6 @@ public:
 private:
     Pin cs;
     SPI* spi;
-    float _tr;  // Digitpot's Terminal resistance.
-    float _ar;  // A(n) resistance.
-    float _sr;  // Current sense resistors.
-    float _vss; // Board vss.
 
     uint8_t channels[6];
     float currents[6];

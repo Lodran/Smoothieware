@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FlashMagic>
+  <Project>
+    <AbsolutePaths>false</AbsolutePaths>
+  </Project>
+  <Preferences>
+    <HighSpeedCommunications>true</HighSpeedCommunications>
+    <ShortTimeout>4000</ShortTimeout>
+    <LongTimeout>60000</LongTimeout>
+    <GenerateDebugFile>false</GenerateDebugFile>
+    <DebugFilePath />
+    <HardwareConfiguration>NONE</HardwareConfiguration>
+    <T1>480</T1>
+    <T2>240</T2>
+    <ProductionTasks>
+      <ProductionTask>
+        <Type>Disabled</Type>
+        <StartAddress>0</StartAddress>
+        <Path />
+        <DataLength>0</DataLength>
+        <Data />
+      </ProductionTask>
+      <ProductionTask>
+        <Type>Disabled</Type>
+        <StartAddress>0</StartAddress>
+        <Path />
+        <DataLength>0</DataLength>
+        <Data />
+      </ProductionTask>
+      <ProductionTask>
+        <Type>Disabled</Type>
+        <StartAddress>0</StartAddress>
+        <Path />
+        <DataLength>0</DataLength>
+        <Data />
+      </ProductionTask>
+    </ProductionTasks>
+  </Preferences>
+  <MainWindow>
+    <Baudrate>57600</Baudrate>
+    <SerialPort>SLAB_USBtoUART</SerialPort>
+    <Device>LPC1768</Device>
+    <XtalFrequency>12.000</XtalFrequency>
+    <Erase>EraseAllFlash</Erase>
+    <SectorsToErase />
+    <FirmwareFile>/Users/raldrich/Documents/Smoothieware/LPC1768/main.hex</FirmwareFile>
+    <ProgramFirmware>On</ProgramFirmware>
+    <Verify>Off</Verify>
+    <SetCRP>Off</SetCRP>
+    <CRP>No JTAG, limited ISP (CRP1)</CRP>
+  </MainWindow>
+</FlashMagic>

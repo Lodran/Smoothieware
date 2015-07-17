@@ -48,8 +48,8 @@ usbdesc_configuration USB::conf = {
 	0,					// .bNumInterfaces
 	1,					// .bConfigurationValue
 	0,					// .iConfiguration
-	CA_BUSPOWERED,		// .bmAttributes
-	500 mA,				// .bMaxPower
+	CA_SELFPOWERED,     // CA_BUSPOWERED,		// .bmAttributes
+	0 mA,               // 500 mA,				// .bMaxPower
 };
 
 USB::USB() {

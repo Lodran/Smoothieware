@@ -64,8 +64,6 @@ XPort_SPI::XPort_SPI(uint16_t inIdentifier) :
                    theMISO.mbed_pinname(),
                    theSCLK.mbed_pinname());
     
-    _spi->frequency(2500000);
-
     // Turns out that chip select isn't a useful concept for SPI shift registers.
     //  Luckily, we can just latch data at the end of any SPI traffic that's intended
     //  for the shift register.
@@ -99,7 +97,9 @@ void XPort_SPI::write()
     //
     // Instead, we let the device watch all SPI traffic, but only latch the data
     //  when we've written correct pin values.
-    
+        
+    _spi->frequency(2500000);
+
     if (_pinCount > 24)
         _spi->write((uint8_t)(_value >> 24));
     

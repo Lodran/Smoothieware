@@ -9,6 +9,7 @@
 /* Begin PBXFileReference section */
 		05650417194C1DA5008BFED0 /* config.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = config.txt; path = ../../../../Volumes/UNTITLED/config.txt; sourceTree = "<group>"; };
 		0571703D1964709C00A08DD9 /* flash_firmware.fmx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = flash_firmware.fmx; sourceTree = "<group>"; };
+		0571FAAA1B59C3A600EB2864 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		05D5C4B519565050007D1EF4 /* bootloader */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bootloader; sourceTree = "<group>"; };
 		05D5C4B619565050007D1EF4 /* build */ = {isa = PBXFileReference; lastKnownFileType = folder; path = build; sourceTree = "<group>"; };
 		05D5C4B719565050007D1EF4 /* checksum.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = checksum.pl; sourceTree = "<group>"; };
@@ -32,6 +33,7 @@
 		0533C6C818CC1DD40070C271 = {
 			isa = PBXGroup;
 			children = (
+				0571FAAA1B59C3A600EB2864 /* .gitignore */,
 				0571703D1964709C00A08DD9 /* flash_firmware.fmx */,
 				05650417194C1DA5008BFED0 /* config.txt */,
 				05D5C4B519565050007D1EF4 /* bootloader */,

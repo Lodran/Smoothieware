@@ -170,7 +170,8 @@ GCFLAGS += -ffunction-sections -fdata-sections  -fno-exceptions -fno-delete-null
 GCFLAGS += $(patsubst %,-I%,$(INCDIRS))
 GCFLAGS += $(DEFINES)
 GCFLAGS += $(DEPFLAGS)
-GCFLAGS += -Wall -Wextra -Wno-unused-parameter -Wcast-align -Wpointer-arith -Wredundant-decls -Wcast-qual -Wcast-align
+GCFLAGS += -Wall -Wextra -Wno-unused-parameter -Wcast-align -Wpointer-arith -Wredundant-decls -Wcast-qual
+GCFLAGS += $(OTHER_CFLAGS)
 
 GPFLAGS += $(GCFLAGS) -fno-rtti -std=gnu++11
 

@@ -14,10 +14,7 @@ static const uint16_t mosi_checksum = CHECKSUM("mosi");
 static const uint16_t miso_checksum = CHECKSUM("miso");
 static const uint16_t sclk_checksum = CHECKSUM("sclk");
 static const uint16_t cs_checksum = CHECKSUM("cs");
-static const uint16_t tr_checksum = CHECKSUM("tr");     // Digitpot's Terminal resistance.
-static const uint16_t ar_checksum = CHECKSUM("ar");     // A(n) resistance.
-static const uint16_t sr_checksum = CHECKSUM("sr");     // Current sense resistors.
-static const uint16_t vss_checksum = CHECKSUM("vss");   // Board vss.
+static const uint16_t factor_checksum = CHECKSUM("factor"); // Amps to wiper ratio.
 
 static const uint16_t alpha_channel_checksum = CHECKSUM("alpha_channel");
 static const uint16_t beta_channel_checksum = CHECKSUM("beta_channel");
@@ -51,14 +48,9 @@ AD5206::AD5206()
                                             cs_checksum)->by_default("4.29")->as_string())->as_output();
     cs.set(1);
     
-    this->_tr = THEKERNEL->config->value(ad5206_checksum,
-                                         tr_checksum)->by_default("10000")->as_number();
-    this->_ar = THEKERNEL->config->value(ad5206_checksum,
-                                         ar_checksum)->by_default("6800")->as_number();
-    this->_sr = THEKERNEL->config->value(ad5206_checksum,
-                                         sr_checksum)->by_default(".05")->as_number();
-    this->_vss = THEKERNEL->config->value(ad5206_checksum,
-                                          vss_checksum)->by_default("3.3")->as_number();
+    // 33k resistor, factor: 332.2727355957
+    // 6490 resistor, factor: 127.4227294922
+    // 4.7k resistor, factor: ?
     
     this->channels[0] = THEKERNEL->config->value(ad5206_checksum,
                                                  alpha_channel_checksum)->by_default(5)->as_number();
@@ -80,15 +72,17 @@ void AD5206::set_current( int axis, float current )
         current = min( max( current, 0.0L ), 2.0L );
         currents[axis] = current;
         cs.set(0);
+        spi->frequency(250000);
         spi->write((int)channels[axis]);
         spi->write((int)current_to_wiper(current));
         cs.set(1);
-    }
+        printf("%s %d (%d) %f (%d)\n", __PRETTY_FUNCTION__, axis, channels[axis], current, current_to_wiper(current));
+   }
 }
 
 unsigned char AD5206::current_to_wiper( float current )
 {
-    int d = ceil((current*(8*_sr))/(_vss/(_tr+_ar))/(_tr/255.0));
+    int d = ceil(current * factor);
     return ((d < 0) ? 0 : (d > 255) ? 255 : d);
 }
 

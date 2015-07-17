@@ -5,6 +5,10 @@
       You should have received a copy of the GNU General Public License along with Smoothie. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef MINI_DK2
+#warning MINI_DK2 NOT defined
+#endif
+
 #include "libs/Kernel.h"
 
 #include "modules/tools/laser/Laser.h"
@@ -52,6 +56,7 @@
 #include "mbed.h"
 
 #include "set_output_pin.h"
+#include "ADC.h"
 
 #define second_usb_serial_enable_checksum  CHECKSUM("second_usb_serial_enable")
 #define disable_msd_checksum  CHECKSUM("msd_disable")
@@ -83,8 +88,8 @@ SDFAT mounter __attribute__ ((section ("AHBSRAM0"))) ("sd", &sd);
 
 #if defined (MINI_DK2)
 
-GPIO led1(P3_25);
-GPIO led2(P3_26);
+//GPIO led1(P3_25);
+//GPIO led2(P3_26);
 //GPIO _SD_SCK(SD_SCK);
 //GPIO _SD_CS(SD_CS);
 
@@ -103,12 +108,7 @@ GPIO leds[5] = {
 void init() {
 
     // Default pins to low status
-#if defined (MINI_DK2)
-    led1.output();
-    led1 = 0;
-    led2.output();
-    led2 = 0;
-#else
+#if !defined (MINI_DK2)
     for (int i = 0; i < 5; i++){
         leds[i].output();
         leds[i]= 0;
@@ -143,7 +143,7 @@ void init() {
     kernel->add_module( new Configurator() );
     kernel->add_module( new CurrentControl() );
     kernel->add_module( new PauseButton() );
-    kernel->add_module( new PlayLed() );
+    //kernel->add_module( new PlayLed() );
     kernel->add_module( new Endstops() );
     kernel->add_module( new Player() );
 
@@ -206,7 +206,7 @@ void init() {
     if(kernel->use_leds) {
         // set some leds to indicate status... led0 init doe, led1 mainloop running, led2 idle loop running, led3 sdcard ok
 #if defined (MINI_DK2)
-        led1 = 1;
+        //led1 = 1;
         //led2 = sdok ? 1: 0;
 #else
         leds[0]= 1; // indicate we are done with init
@@ -243,10 +243,12 @@ int main()
         if(THEKERNEL->use_leds) {
             // flash led 2 to show we are alive
 #if defined (MINI_DK2)
-            led2 = (cnt++ & 0x1000) ? 1 : 0;
+            //led2 = (cnt++ & 0x1000) ? 1 : 0;
 #else
             leds[1]= (cnt++ & 0x1000) ? 1 : 0;
 #endif
+            if (cnt == 0)
+                THEKERNEL->adc->dump();
         }
         THEKERNEL->call_event(ON_MAIN_LOOP);
         THEKERNEL->call_event(ON_IDLE);

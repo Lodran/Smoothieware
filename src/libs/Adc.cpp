@@ -55,3 +55,17 @@ PinName Adc::_pin_to_pinname(Pin* pin){
     }
 }
 
+void Adc::dump()
+{
+    /*
+    PinName pins[] = { p15, p16, p17, p18, p19, p20 };
+    
+    printf("ADC: ");
+    for (int i=0; i<6; i++)
+    {
+        unsigned int value = this->adc->read(pins[i]);
+        printf("%d, ", value);
+    }
+    printf("\n");
+     */
+}

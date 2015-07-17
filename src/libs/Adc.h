@@ -22,6 +22,8 @@ class Adc : public Module{
         void enable_pin(Pin* pin);
         unsigned int read(Pin* pin);
         PinName _pin_to_pinname(Pin* pin);
+    
+    void dump();
 
         ADC* adc;
 };

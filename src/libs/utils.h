@@ -1,21 +1,23 @@
-#ifndef utils_h
-#define utils_h
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <stdint.h>
-using namespace std;
 #include <string>
 #include <vector>
+
 using std::string;
+using std::vector;
 
-extern volatile bool _isr_context;
-
-string lc(string str);
+string lc(const string& str);
 
 bool is_alpha( int );
 bool is_digit( int );
 bool is_numeric( int );
 bool is_alphanum( int );
 bool is_whitespace( int );
+
+vector<string> split(const char *str, char c = ',');
+vector<float> parse_number_list(const char *str);
 
 string remove_non_number( string str );
 
@@ -34,5 +36,6 @@ void system_reset( bool dfu= false );
 
 string absolute_from_relative( string path );
 
+int append_parameters(char *buf, std::vector<std::pair<char,float>> params, size_t bufsize);
 
 #endif

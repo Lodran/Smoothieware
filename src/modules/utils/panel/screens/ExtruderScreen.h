@@ -8,27 +8,19 @@
 #ifndef EXTRUDERSCREEN_H
 #define EXTRUDERSCREEN_H
 
-#include "libs/Kernel.h"
-#include "libs/nuts_bolts.h"
-#include "libs/utils.h"
-#include "libs/Pin.h"
-#include "LcdBase.h"
-#include "Panel.h"
 #include "PanelScreen.h"
-
 
 class ExtruderScreen : public PanelScreen {
     public:
         ExtruderScreen();
         void on_refresh();
         void on_enter();
-        void on_main_loop();
         void display_menu_line(uint16_t line);
         void clicked_menu_entry(uint16_t line);
         int idle_timeout_secs() { return 60; }
 
     private:
-      string command;
+      void setupConfigSettings();
 };
 
 #endif

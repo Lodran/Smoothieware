@@ -14,16 +14,17 @@
 
 // This is a gcode object. It reprensents a GCode string/command, an caches some important values about that command for the sake of performance.
 // It gets passed around in events, and attached to the queue ( that'll change )
-Gcode::Gcode(const string &command, StreamOutput *stream)
+Gcode::Gcode(const string &command, StreamOutput *stream, bool strip)
 {
     this->command= strdup(command.c_str());
     this->m= 0;
     this->g= 0;
+    this->subcode= 0;
     this->add_nl= false;
     this->stream= stream;
     this->millimeters_of_travel = 0.0F;
-    this->accepted_by_module = false;
-    prepare_cached_values();
+    prepare_cached_values(strip);
+    this->stripped= strip;
 }
 
 Gcode::~Gcode()
@@ -42,9 +43,9 @@ Gcode::Gcode(const Gcode &to_copy)
     this->has_g                 = to_copy.has_g;
     this->m                     = to_copy.m;
     this->g                     = to_copy.g;
+    this->subcode               = to_copy.subcode;
     this->add_nl                = to_copy.add_nl;
     this->stream                = to_copy.stream;
-    this->accepted_by_module    = false;
     this->txt_after_ok.assign( to_copy.txt_after_ok );
 }
 
@@ -57,11 +58,11 @@ Gcode &Gcode::operator= (const Gcode &to_copy)
         this->has_g                 = to_copy.has_g;
         this->m                     = to_copy.m;
         this->g                     = to_copy.g;
+        this->subcode               = to_copy.subcode;
         this->add_nl                = to_copy.add_nl;
         this->stream                = to_copy.stream;
         this->txt_after_ok.assign( to_copy.txt_after_ok );
     }
-    this->accepted_by_module = false;
     return *this;
 }
 
@@ -112,33 +113,79 @@ int Gcode::get_int( char letter, char **ptr ) const
     return 0;
 }
 
+uint32_t Gcode::get_uint( char letter, char **ptr ) const
+{
+    const char *cs = command;
+    char *cn = NULL;
+    for (; *cs; cs++) {
+        if( letter == *cs ) {
+            cs++;
+            int r = strtoul(cs, &cn, 10);
+            if(ptr != nullptr) *ptr= cn;
+            if (cn > cs)
+                return r;
+        }
+    }
+    if(ptr != nullptr) *ptr= nullptr;
+    return 0;
+}
+
 int Gcode::get_num_args() const
 {
     int count = 0;
-    for(size_t i = 1; i < strlen(command); i++) {
+    for(size_t i = stripped?0:1; i < strlen(command); i++) {
         if( this->command[i] >= 'A' && this->command[i] <= 'Z' ) {
+            if(this->command[i] == 'T') continue;
             count++;
         }
     }
     return count;
 }
 
+std::map<char,float> Gcode::get_args() const
+{
+    std::map<char,float> m;
+    for(size_t i = stripped?0:1; i < strlen(command); i++) {
+        char c= this->command[i];
+        if( c >= 'A' && c <= 'Z' ) {
+            if(c == 'T') continue;
+            m[c]= get_value(c);
+        }
+    }
+    return m;
+}
+
 // Cache some of this command's properties, so we don't have to parse the string every time we want to look at them
-void Gcode::prepare_cached_values()
+void Gcode::prepare_cached_values(bool strip)
 {
     char *p= nullptr;
     if( this->has_letter('G') ) {
         this->has_g = true;
         this->g = this->get_int('G', &p);
+
     } else {
         this->has_g = false;
     }
+
     if( this->has_letter('M') ) {
         this->has_m = true;
         this->m = this->get_int('M', &p);
+
     } else {
         this->has_m = false;
     }
+
+    if(has_g || has_m) {
+        // look for subcode and extract it
+        if(p != nullptr && *p == '.') {
+            this->subcode = strtoul(p+1, &p, 10);
+
+        }else{
+            this->subcode= 0;
+        }
+    }
+
+    if(!strip) return;
 
     // remove the Gxxx or Mxxx from string
     if (p != nullptr) {
@@ -148,15 +195,10 @@ void Gcode::prepare_cached_values()
     }
 }
 
-void Gcode::mark_as_taken()
-{
-    this->accepted_by_module = true;
-}
-
-// strip off X Y Z I J parameters if G0/1/2/3
+// strip off X Y Z I J K parameters if G0/1/2/3
 void Gcode::strip_parameters()
 {
-    if(has_g && g <= 4){
+    if(has_g && g < 4){
         // strip the command of the XYZIJK parameters
         string newcmd;
         char *cn= command;
@@ -171,12 +213,13 @@ void Gcode::strip_parameters()
             char *eos;
             strtof(pch+1, &eos);
             cn= eos; // point to end of last parameter
-            pch= strpbrk(cn, "XYZIJ"); // find next parameter
+            pch= strpbrk(cn, "XYZIJK"); // find next parameter
         }
         // append anything left on the line
         newcmd.append(cn);
-        // strip whitespace to save even more
-        newcmd.erase(std::remove_if(newcmd.begin(), newcmd.end(), ::isspace), newcmd.end());
+
+        // strip whitespace to save even more, this causes problems so don't do it
+        //newcmd.erase(std::remove_if(newcmd.begin(), newcmd.end(), ::isspace), newcmd.end());
 
         // release the old one
         free(command);

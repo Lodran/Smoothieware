@@ -9,6 +9,8 @@
 #ifndef GCODE_H
 #define GCODE_H
 #include <string>
+#include <map>
+
 using std::string;
 
 class StreamOutput;
@@ -16,7 +18,7 @@ class StreamOutput;
 // Object to represent a Gcode command
 class Gcode {
     public:
-        Gcode(const string&, StreamOutput*);
+        Gcode(const string&, StreamOutput*, bool strip=true);
         Gcode(const Gcode& to_copy);
         Gcode& operator= (const Gcode& to_copy);
         ~Gcode();
@@ -25,8 +27,9 @@ class Gcode {
         bool has_letter ( char letter ) const;
         float get_value ( char letter, char **ptr= nullptr ) const;
         int get_int ( char letter, char **ptr= nullptr ) const;
+        uint32_t get_uint ( char letter, char **ptr= nullptr ) const;
         int get_num_args() const;
-        void mark_as_taken();
+        std::map<char,float> get_args() const;
         void strip_parameters();
 
         // FIXME these should be private
@@ -38,14 +41,15 @@ class Gcode {
             bool add_nl:1;
             bool has_m:1;
             bool has_g:1;
-            bool accepted_by_module:1;
+            bool stripped:1;
+            uint8_t subcode:3;
         };
 
         StreamOutput* stream;
         string txt_after_ok;
 
     private:
-        void prepare_cached_values();
+        void prepare_cached_values(bool strip=true);
         char *command;
 };
 #endif
